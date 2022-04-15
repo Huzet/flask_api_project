@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<h1 class="display-1">Search for Pokemon</h1>
+<h3>pokemon selected</h3>
+<ul class="list-group">
+    {% for x in pokemon_list:%}
+    <li href="#" class="list-group-item list-group-item-action list-group-item-info"><img src={{pokemon_list[x]}} alt={{x}} class="img-fluid">{{x}}</li>
+    {% endfor %}
+</ul>
+<form action="/update" method="post">
+    <p><input type="text" name="pokemon"></p>
+    <p><input type="submit" value="add_pokemon" class="btn btn-success"></p>
+</form>
+<form action="/clear" method="post">
+    <p><input type="submit" value="clear_pokemon" class="btn btn-success"></p>
+</form>
+<form action="/display_pokemon" method="post">
+    <p><input type="submit" value="display_pokemon" class="btn btn-success"></p>
+</form>
+{% endblock %}

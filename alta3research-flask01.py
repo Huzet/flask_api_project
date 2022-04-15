@@ -33,13 +33,14 @@ TODO project reqs
     - reads from/writes to a sqlite3 database
 
 TODO what I want to implement
-[ ] get sessions working for storing pokemon
-[ ] clean up html/css
+[X] get sessions working for storing pokemon
+[X] clean up html/css
 author Tomas
 v1
 """
+# Pokemon list was replaced by session keeping here in case thu
+# pokemon_list = {}
 
-pokemon_list = {}
 # MY SCRIPTS
 # get pokemon  image url
 url_pokemon_stats = "https://pokeapi.co/api/v2/pokemon/"
@@ -60,15 +61,13 @@ app = Flask(__name__)
 # FLASk
 # session
 app.secret_key = "secret phrase here"
+
+
 # Main page
-
-
 @app.route("/")
 def index():
     if "username" in session:
         username = session["username"]
-        # if "pokemon_list" in session:
-        #     pokemon_list = session["pokemon_list"]
         print(f"Welcome Back {username}")
         print(session)
         return redirect(url_for("search", name=username))
@@ -86,38 +85,46 @@ def login():
             return render_template("index.html", page="login")
         else:
             session["username"] = request.form.get("username")
+            session["pokemon_list"] = {}
     return redirect(url_for("search", name=user))
 
-
+# Main page for displaying pokemon list
 @app.route("/search/<name>", methods=["POSTS", "GET"])
 def search(name):
-    return render_template("search.html", page="search", name=session["username"], pokemon_list=pokemon_list)
+    return render_template("search.html", page="search", name=session["username"], pokemon_list=session["pokemon_list"])
 
-
+# gets pokemon data
 @app.route("/update", methods=["POST"])
 def update():
-
+    print("updating your pokemon")
     pokemon = request.form.get("pokemon")
     pokemon_data = get_pokemon_img(pokemon)
     if pokemon_data == "not a pokemon":
+        print("not a legit pokemon or something went wrong with API")
         return redirect("/search/" + session["username"])
     else:
-        pokemon_list[pokemon] = pokemon_data
-        # session["pokemon_list"].append(pokemon)
+        # pokemon_list[pokemon] = pokemon_data
+        print("adding pokemon")
+        session_list = session["pokemon_list"]
+        session_list[pokemon] = pokemon_data
+        session.modified = True
 
     return redirect("/search/" + session["username"])
 
-
+# clears pokemon list
 @app.route("/clear", methods=["POST"])
 def clear():
-    # session["pokemon_list"].clear()
-    pokemon_list.clear()
+    print("clearing pokemon list")
+    session["pokemon_list"].clear()
+    session.modified = True
+    # pokemon_list.clear()
     return render_template("search.html", page="search", name=session["username"])
 
-
+# gives JSON data 
 @app.route("/display_pokemon", methods=["POST", "GET"])
 def display_pokemon():
-    return jsonify(pokemon_list)
+    print("jasofying your pokemon list")
+    return jsonify(session["pokemon_list"])
 
 
 if __name__ == ("__main__"):

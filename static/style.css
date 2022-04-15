@@ -1,12 +1,18 @@
 body {
     color:  #C2D5E4;
-    background-color: #0077BC
+    background-color: #0077BC;
 }
 
 h1 {
+    text-align: center;
     background-color: #E64556
 }
 
 h3 {
     background-color: #065A9C;
+    padding-left: 10px;
+}
+
+ul, form, p {
+    padding-left: 10px;
 }
